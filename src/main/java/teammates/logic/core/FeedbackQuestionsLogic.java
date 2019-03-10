@@ -55,7 +55,7 @@ public final class FeedbackQuestionsLogic {
      *
      * @return the created question
      */
-    public FeedbackQuestionAttributes createFeedbackQuestion(FeedbackQuestionAttributes fqa)
+    public void createFeedbackQuestion(FeedbackQuestionAttributes fqa)
             throws InvalidParametersException {
 
         String feedbackSessionName = fqa.feedbackSessionName;
@@ -70,7 +70,7 @@ public final class FeedbackQuestionsLogic {
         // TODO question numbers adjustment cannot be done before a question is created
         // as the question to create may not be valid
         adjustQuestionNumbers(questions.size() + 1, fqa.questionNumber, questions);
-        return createFeedbackQuestionNoIntegrityCheck(fqa, fqa.questionNumber);
+        createFeedbackQuestionNoIntegrityCheck(fqa, fqa.questionNumber);
     }
 
     /**
@@ -78,11 +78,11 @@ public final class FeedbackQuestionsLogic {
      * Does not check if feedback session exists.
      * Does not check if question number supplied is valid(does not check for clashes, or make adjustments)
      */
-    public FeedbackQuestionAttributes createFeedbackQuestionNoIntegrityCheck(
+    public void createFeedbackQuestionNoIntegrityCheck(
             FeedbackQuestionAttributes fqa, int questionNumber) throws InvalidParametersException {
         fqa.questionNumber = questionNumber;
         fqa.removeIrrelevantVisibilityOptions();
-        return fqDb.createFeedbackQuestionWithoutExistenceCheck(fqa);
+        fqDb.createFeedbackQuestionWithoutExistenceCheck(fqa);
     }
 
     public FeedbackQuestionAttributes copyFeedbackQuestion(

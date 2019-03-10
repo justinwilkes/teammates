@@ -1501,10 +1501,10 @@ public class Logic {
      *
      * @return the created question
      */
-    public FeedbackQuestionAttributes createFeedbackQuestion(FeedbackQuestionAttributes feedbackQuestion)
+    public void createFeedbackQuestion(FeedbackQuestionAttributes feedbackQuestion)
             throws InvalidParametersException {
         Assumption.assertNotNull(feedbackQuestion);
-        return feedbackQuestionsLogic.createFeedbackQuestion(feedbackQuestion);
+        feedbackQuestionsLogic.createFeedbackQuestion(feedbackQuestion);
     }
 
     /**

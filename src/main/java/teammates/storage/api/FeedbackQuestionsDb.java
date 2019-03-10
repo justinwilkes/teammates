@@ -18,6 +18,9 @@ import teammates.common.exception.InvalidParametersException;
 import teammates.common.util.Assumption;
 import teammates.common.util.Const;
 import teammates.storage.entity.FeedbackQuestion;
+import teammates.storage.api.Event;
+import teammates.storage.api.MessageBus;
+
 
 /**
  * Handles CRUD operations for feedback questions.
@@ -27,6 +30,8 @@ import teammates.storage.entity.FeedbackQuestion;
  */
 public class FeedbackQuestionsDb extends EntitiesDb<FeedbackQuestion, FeedbackQuestionAttributes> {
     public static final String ERROR_UPDATE_NON_EXISTENT = "Trying to update non-existent Feedback Question : ";
+
+    private static final MessageBus msgBus = MessageBus.inst();
 
     /**
      * Creates multiple questions without checking for existence. Also calls {@link #flush()},
@@ -70,9 +75,11 @@ public class FeedbackQuestionsDb extends EntitiesDb<FeedbackQuestion, FeedbackQu
                 "Trying to get non-existent Question: " + questionNumber + "." + feedbackSessionName + "/" + courseId);
     }
 
-    public FeedbackQuestionAttributes createFeedbackQuestionWithoutExistenceCheck(
-            FeedbackQuestionAttributes entityToAdd) throws InvalidParametersException {
-        return makeAttributes(createEntityWithoutExistenceCheck(entityToAdd));
+    public void createFeedbackQuestionWithoutExistenceCheck(FeedbackQuestionAttributes entityToAdd) throws InvalidParametersException {
+        makeAttributes(createEntityWithoutExistenceCheck(entityToAdd));
+
+        // Add to messageBus
+        this.msgBus.sentToMessageHandler(new Event("FeedbackQuestionCreated", entityToAdd));
     }
 
     /**
@@ -224,9 +231,9 @@ public class FeedbackQuestionsDb extends EntitiesDb<FeedbackQuestion, FeedbackQu
     }
 
     @Override
-    protected FeedbackQuestionAttributes makeAttributes(FeedbackQuestion entity) {
+    protected void makeAttributes(FeedbackQuestion entity) {
         Assumption.assertNotNull(Const.StatusCodes.DBLEVEL_NULL_INPUT, entity);
 
-        return FeedbackQuestionAttributes.valueOf(entity);
+        FeedbackQuestionAttributes.valueOf(entity);
     }
 }
